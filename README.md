@@ -4,7 +4,7 @@
 This project is an automation framework for testing the search functionality of a web application using Java, Selenium WebDriver, and Cucumber. It includes test scenarios for searching with valid and invalid terms, search suggestions, and pagination in search results.
 
 **Features**
-Automated Search Testing: Verifies valid and invalid search terms.
+Automated Search Testing: Verifies valid search terms.
 Search Suggestions Testing: Tests the functionality of search suggestions.
 Pagination Testing: Ensures the correct display of results when navigating through pages.
 Readable Test Reports: Test results are generated in an HTML report for easy readability.
