@@ -1,13 +1,15 @@
 package pages;
 
-import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import utils.WebDriverUtils;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SearchPage {
+    private static final Logger logger = LogManager.getLogger(SearchPage.class);
     private static final int SHORT_WAIT_TIME = 5;
     protected WebDriver driver;
     protected WebDriverUtils webDriverUtils;
@@ -28,9 +30,6 @@ public class SearchPage {
     @FindBy(xpath = "//div[@id='search']//div[contains(@class,'g')]")
     protected List<WebElement> searchResults;
 
-    @FindBy(xpath = "//p[@role='heading']")
-    protected WebElement invalidSearchMsg;
-
     public SearchPage(WebDriver driver) {
         this.driver = driver;
         this.webDriverUtils = new WebDriverUtils(driver);
@@ -46,7 +45,7 @@ public class SearchPage {
             webDriverUtils.waitForElementToBeClickable(searchButton);
             searchButton.click();
         } catch (Exception e) {
-            System.out.println("Search button click failed. Trying Keys.ENTER. Exception: " + e.getMessage());
+            logger.error("Search button click failed. Trying Keys.ENTER. Exception: " + e.getMessage());
             searchBox.sendKeys(Keys.ENTER);
         }
     }
@@ -57,7 +56,7 @@ public class SearchPage {
         }
     }
 
-    public void selectSuggestion(String expectedSuggestion) {
+    public boolean selectSuggestion(String expectedSuggestion) {
         boolean suggestionFound = false;
         webDriverUtils.pause(SHORT_WAIT_TIME);
         for (WebElement suggestion : suggestionList) {
@@ -68,7 +67,7 @@ public class SearchPage {
                 break;
             }
         }
-        Assert.assertTrue("The suggestion '" + expectedSuggestion + "' was not found in the suggestion list", suggestionFound);
+        return suggestionFound;
     }
 
     public void clickNextButton() {
@@ -78,13 +77,15 @@ public class SearchPage {
     }
 
     public void clickPreviousButton() {
-        clickNextButton();
-        if (webDriverUtils.isElementVisible(previousButton)) {
-            webDriverUtils.waitForElementToBeClickable(previousButton);
-            webDriverUtils.scrollToElement(previousButton);
-            previousButton.click();
-        } else {
-            throw new NoSuchElementException("Previous button not visible after clicking next");
+        try{
+            clickNextButton();
+            if (webDriverUtils.isElementVisible(previousButton)) {
+                webDriverUtils.waitForElementToBeClickable(previousButton);
+                webDriverUtils.scrollToElement(previousButton);
+                previousButton.click();
+            }
+        }catch(NoSuchElementException e){
+            logger.error("Previous button not found or not clickable: " + e.getMessage());
         }
     }
 

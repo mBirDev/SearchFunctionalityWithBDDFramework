@@ -59,8 +59,8 @@ public class SearchSteps {
     @Then("the user should be able to select an option from the suggestion list")
     public void userSelectsOptionFromSuggestionList() {
         String expectedSuggestion = "selenium webdriver";
-        searchPage.selectSuggestion(expectedSuggestion);
-
+        boolean suggestionFound = searchPage.selectSuggestion(expectedSuggestion);
+        Assert.assertTrue("The suggestion '" + expectedSuggestion + "' was not found in the suggestion list", suggestionFound);
         Assert.assertTrue("Search box should contain the selected suggestion",
                 searchPage.searchBox.getAttribute("value").contains(expectedSuggestion));
     }
